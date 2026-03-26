@@ -1,0 +1,77 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // ===============================================================
+    // Assumed Data Model
+    // ===============================================================
+    //
+    // Collection: tasks
+    // Document ID: auto-generated
+    // Fields:
+    //   - title: string (required)
+    //   - location: string (required)
+    //   - date: string (required, ISO format)
+    //   - time: string (required)
+    //   - responsiblePerson: string
+    //   - customerName: string
+    //   - customerPhone: string
+    //   - coordinatorPhone: string
+    //   - dolls: map
+    //     - normal: int
+    //     - licensedEquivalent: int
+    //     - authenticLicensed: int
+    //   - otherEquipment: string
+    //   - notes: string
+    //   - userId: string (required, owner UID)
+    //   - createdAt: timestamp
+    //   - updatedAt: timestamp
+    //
+    // ===============================================================
+
+    // ===============================================================
+    // Helper Functions
+    // ===============================================================
+    
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    function isDocOwner() {
+      return isAuthenticated() && request.auth.uid == resource.data.userId;
+    }
+
+    function isValidTask(data) {
+      return data.keys().hasAll(['title', 'location', 'date', 'startTime', 'endTime', 'jobType', 'userId']) &&
+             data.title is string && data.title.size() > 0 && data.title.size() < 200 &&
+             data.location is string && data.location.size() > 0 && data.location.size() < 500 &&
+             data.date is string && data.date.matches("^\\d{4}-\\d{2}-\\d{2}T.*") &&
+             data.startTime is string &&
+             data.endTime is string &&
+             data.jobType is string &&
+             data.userId == 'public' &&
+             (data.dolls == null || data.dolls is map) &&
+             (data.cabinetCount == null || data.cabinetCount is int) &&
+             (data.hasDecoration == null || data.hasDecoration is bool) &&
+             (data.decorationItems == null || data.decorationItems is list);
+    }
+
+    // ===============================================================
+    // Rules
+    // ===============================================================
+
+    match /tasks/{taskId} {
+      allow read: if true;
+      allow create: if isValidTask(request.resource.data);
+      allow update: if isValidTask(request.resource.data);
+      allow delete: if true;
+    }
+
+    match /test/connection {
+      allow read: if true;
+    }
+  }
+}

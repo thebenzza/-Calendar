@@ -1,0 +1,5 @@
+{
+  "name": "Task Calendar Manager",
+  "description": "A specialized calendar for managing tasks with detailed fields for events, customers, and equipment tracking.",
+  "requestFramePermissions": []
+}

@@ -1,0 +1,47 @@
+{
+  "entities": {
+    "Task": {
+      "title": "Task",
+      "description": "A task event with customer and equipment details",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string", "description": "Job title" },
+        "location": { "type": "string", "description": "Job location" },
+        "date": { "type": "string", "format": "date-time", "description": "ISO date string" },
+        "startTime": { "type": "string", "description": "Start time" },
+        "endTime": { "type": "string", "description": "End time" },
+        "jobType": { "type": "string", "description": "Type of job" },
+        "responsiblePerson": { "type": "string", "description": "Person in charge" },
+        "customerName": { "type": "string", "description": "Customer name" },
+        "customerPhone": { "type": "string", "description": "Customer phone number" },
+        "coordinatorPhone": { "type": "string", "description": "Coordinator phone number" },
+        "dolls": {
+          "type": "object",
+          "properties": {
+            "normal": { "type": "integer" },
+            "licensedEquivalent": { "type": "integer" },
+            "authenticLicensed": { "type": "integer" }
+          }
+        },
+        "otherEquipment": { "type": "string" },
+        "notes": { "type": "string" },
+        "cabinetCount": { "type": "integer", "description": "Number of cabinets" },
+        "hasDecoration": { "type": "boolean", "description": "Whether cabinet decoration is needed" },
+        "decorationItems": { 
+          "type": "array", 
+          "items": { "type": "string" },
+          "description": "List of decoration details"
+        },
+        "userId": { "type": "string", "description": "Owner of the task (always 'public' for this version)" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["title", "location", "date", "startTime", "endTime", "jobType", "userId"]
+    }
+  },
+  "firestore": {
+    "tasks": {
+      "schema": "Task",
+      "description": "Collection of tasks managed by users"
+    }
+  }
+}
